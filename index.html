@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA: ADMISIÓN MIT - RANK S</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Orbitron:wght@400;700&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --morado-fondo: #e0c3fc;
+            --azul-fondo: #bde0fe;
+            --azul-leveling: rgba(10, 25, 47, 0.9);
+            --neon-blue: #00f2ff;
+            --glass-white: rgba(255, 255, 255, 0.4);
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--morado-fondo) 0%, var(--azul-fondo) 100%);
+            background-attachment: fixed;
+            font-family: 'Quicksand', sans-serif;
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .system-title { font-family: 'Great Vibes', cursive; font-size: 3.8rem; color: #000; margin: 10px 0; }
+        
+        .status-panel {
+            background: var(--azul-leveling);
+            border: 2px solid var(--neon-blue);
+            color: #fff; width: 100%; max-width: 850px;
+            padding: 15px; border-radius: 10px; margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 0 15px var(--neon-blue);
+            position: relative;
+        }
+
+        .countdown-box { font-size: 0.8rem; color: #ff4757; margin-top: 5px; text-shadow: 0 0 5px red; }
+
+        .quick-nav { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .nav-icon { background: var(--azul-leveling); border: 1px solid var(--neon-blue); color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 0.8rem; transition: 0.3s; cursor: pointer;}
+        .nav-icon:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 10px var(--neon-blue); }
+
+        .grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px; width: 100%; max-width: 950px;
+        }
+
+        .folder {
+            background: var(--glass-white);
+            border: 1px solid rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px; padding: 20px;
+            cursor: pointer; transition: 0.3s; text-align: center;
+            position: relative;
+        }
+        .folder:hover { transform: translateY(-5px); border-color: var(--neon-blue); }
+        .folder-title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; color: #000; margin: 10px 0; }
+
+        .bar-bg { background: rgba(255,255,255,0.2); height: 12px; border-radius: 6px; margin: 10px 0; overflow: hidden; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, #6c5ce7, var(--neon-blue)); width: 0%; transition: 1s; }
+
+        .modal {
+            display: none; position: fixed; z-index: 3000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+        }
+        .modal-content {
+            background: var(--azul-leveling);
+            border: 2px solid var(--neon-blue);
+            color: #fff; margin: 2% auto; padding: 30px;
+            border-radius: 15px; width: 90%; max-width: 800px;
+            max-height: 85vh; overflow-y: auto;
+        }
+        .modal-content h2 { font-family: 'Orbitron', sans-serif; color: var(--neon-blue); border-bottom: 1px solid var(--neon-blue); padding-bottom: 10px; }
+
+        .daily-quiz {
+            background: rgba(255, 255, 255, 0.2); border: 1px solid #000;
+            padding: 15px; border-radius: 10px; margin-bottom: 20px; width: 100%; max-width: 820px;
+        }
+
+        .senku-mini { position: absolute; top: 10px; right: 10px; width: 70px; filter: drop-shadow(0 0 5px green); }
+        .rocket { font-size: 40px; animation: float 3s ease-in-out infinite; display: inline-block; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        
+        .floating-snoopy { position: fixed; bottom: 20px; right: 20px; width: 80px; z-index: 100; }
+        .senku-quote { font-style: italic; font-size: 0.9rem; color: #2d3436; margin: 10px 0; text-align: center; max-width: 800px; font-weight: bold;}
+
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; color: white; font-size: 0.85rem; }
+        th, td { border: 1px solid var(--neon-blue); padding: 10px; text-align: left; }
+        th { background: rgba(0, 242, 255, 0.2); color: var(--neon-blue); font-family: 'Orbitron'; }
+        
+        .timer-btn { background: none; border: 1px solid var(--neon-blue); color: white; cursor: pointer; border-radius: 5px; padding: 3px 8px; font-size: 0.7rem; }
+        .timer-btn:hover { background: var(--neon-blue); color: black; }
+    </style>
+</head>
+<body>
+
+    <div class="rocket">🚀</div>
+    <h1 class="system-title">MIT Quest System</h1>
+
+    <div class="senku-quote">
+        "I'm ten billion percent sure you'll get in if you follow the logic." — Senku Ishigami <br>
+        <small>"Equilibrium is a state of no change." — Physics / "Cogito ergo sum." — Descartes</small>
+    </div>
+
+    <div class="quick-nav">
+        <a href="https://www.youtube.com" target="_blank" class="nav-icon" onclick="playSfx()">YouTube</a>
+        <a href="https://chat.openai.com" target="_blank" class="nav-icon" onclick="playSfx()">ChatGPT</a>
+        <a href="https://gemini.google.com" target="_blank" class="nav-icon" onclick="playSfx()">Gemini</a>
+        <a href="https://www.pinterest.com" target="_blank" class="nav-icon" onclick="playSfx()">Pinterest</a>
+        <a href="https://mitadmissions.org" target="_blank" class="nav-icon" onclick="playSfx()">MIT Portal</a>
+    </div>
+    
+    <div class="status-panel">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHYwdWp4OXNqZ3Y0Z3Z4Z3Z4Z3Z4Z3Z4Z3Z4Z3Z4Z3Z4Z3Z4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9iJmN0PXM/senku.png" class="senku-mini">
+        <div>PLAYER: PAU | RANK: <span id="rank" style="color:var(--neon-blue)">E</span></div>
+        <div class="countdown-box">⏳ DAYS TO MIT DEADLINE: <span id="countdown">---</span></div>
+        <div>LEVEL: <span id="lvl">1</span> | XP: <span id="xp-num">0</span>%</div>
+        <div class="bar-bg"><div id="xp-bar" class="bar-fill"></div></div>
+        <div id="pomodoro">
+            ⏱️ <span id="timer">25:00</span> 
+            <button onclick="timerCtrl('start')" class="timer-btn">START</button>
+            <button onclick="timerCtrl('pause')" class="timer-btn">PAUSE</button>
+            <button onclick="timerCtrl('reset')" class="timer-btn">RESET</button>
+        </div>
+    </div>
+
+    <div class="daily-quiz">
+        <strong>🧪 DAILY TRIAL (5 Questions):</strong>
+        <div id="quiz-area">
+            <p id="q-text">Ready to start today's logic test?</p>
+            <button onclick="startDailyQuiz()" class="nav-icon">BEGIN TEST</button>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="folder" onclick="show('sat'); playSfx();">
+            <img src="https://pngimg.com/d/snoopy_PNG1.png" width="40">
+            <h3 class="folder-title">SAT MASTERY</h3>
+            <div class="bar-bg"><div class="bar-fill" style="width:25%"></div></div>
+        </div>
+
+        <div class="folder" onclick="show('english'); playSfx();">
+            <img src="https://pngimg.com/d/snoopy_PNG16.png" width="40">
+            <h3 class="folder-title">DUOLINGO (C1)</h3>
+            <div class="bar-bg"><div class="bar-fill" style="width:20%"></div></div>
+        </div>
+
+        <div class="folder" onclick="show('essays'); playSfx();">
+            <img src="https://pngimg.com/d/snoopy_PNG25.png" width="40">
+            <h3 class="folder-title">MIT ESSAYS</h3>
+            <div class="bar-bg"><div class="bar-fill" style="width:10%"></div></div>
+        </div>
+
+        <div class="folder" onclick="show('trans'); playSfx();">
+            <img src="https://pngimg.com/d/snoopy_PNG9.png" width="40">
+            <h3 class="folder-title">TRANSLATORS</h3>
+            <small>Official Documents</small>
+        </div>
+
+        <div class="folder" onclick="show('budget'); playSfx();">
+            <h3 class="folder-title">PRICES & FEES</h3>
+            <small>COP / USD</small>
+        </div>
+
+        <div class="folder" onclick="show('scholarships'); playSfx();">
+            <h3 class="folder-title">SCHOLARSHIPS</h3>
+            <small>Financial Aid</small>
+        </div>
+    </div>
+
+    <div id="sat" class="modal"><div class="modal-content">
+        <span onclick="hide('sat')" style="float:right; cursor:pointer;">[X]</span>
+        <h2>SAT Mastery Guide</h2>
+        <p><b>Bogotá Test Centers:</b> CNG (Colegio Nueva Granada), Abraham Lincoln, San Carlos.</p>
+        <table>
+            <tr><th>Section</th><th>Topics</th><th>Difficulty</th></tr>
+            <tr><td>Math</td><td>Algebra, Advanced Math, Trig, Geometry</td><td>Hard</td></tr>
+            <tr><td>R&W</td><td>Evidence, Craft & Structure, Standard English</td><td>Medium</td></tr>
+        </table>
+        <h3>Free Resources:</h3>
+        <a href="https://bluebook.collegeboard.org" class="nav-icon">Bluebook App</a>
+        <a href="https://www.khanacademy.org/test-prep/sat" class="nav-icon">Khan Academy</a>
+    </div></div>
+
+    <div id="english" class="modal"><div class="modal-content">
+        <span onclick="hide('english')" style="float:right; cursor:pointer;">[X]</span>
+        <h2>Duolingo English Test (DET)</h2>
+        <p><b>Goal:</b> 130+ (C1 level). It's 100% Online from Bogotá.</p>
+        <h3>Components:</h3>
+        <ul>
+            <li>Speaking: Describe images, speak on a topic (3 mins).</li>
+            <li>Writing: Respond to prompts (5 mins), Interactive Reading.</li>
+        </ul>
+        <h3>Tips:</h3>
+        <p>1. Practice "Read Aloud" for pronunciation. 2. Use advanced connectors (Notwithstanding, Henceforth).</p>
+        <a href="https://englishtest.duolingo.com/readiness" class="nav-icon">Free Readiness Test</a>
+    </div></div>
+
+    <div id="essays" class="modal"><div class="modal-content">
+        <span onclick="hide('essays')" style="float:right; cursor:pointer;">[X]</span>
+        <h2>MIT Essay Strategy</h2>
+        <p><b>Style:</b> MIT is collaborative. Use "we" and show impact.</p>
+        <h3>Prompts:</h3>
+        <ol>
+            <li>What do you do for pure pleasure?</li>
+            <li>Describe the world you come from.</li>
+            <li>How have you contributed to your community?</li>
+            <li>A significant challenge you faced.</li>
+        </ol>
+        <p><b>Deadline:</b> Drafts must be ready by August 2026.</p>
+    </div></div>
+
+    <div id="trans" class="modal"><div class="modal-content">
+        <span onclick="hide('trans')" style="float:right; cursor:pointer;">[X]</span>
+        <h2>Official Translators (Bogotá)</h2>
+        <table>
+            <tr><th>Option</th><th>Certification</th><th>Price (Per Page)</th></tr>
+            <tr><td>Certified Prof.</td><td>Official Stamp</td><td>$40,000 - $60,000 COP</td></tr>
+            <tr><td>Traducciones Bogotá</td><td>ATA / Ministry</td><td>$55,000 COP</td></tr>
+            <tr><td>Rev.com</td><td>Digital Certified</td><td>$33 USD</td></tr>
+        </table>
+        <p><b>When to translate?</b> May - June 2026. Keep copies of your transcripts!</p>
+    </div></div>
+
+    <div id="budget" class="modal"><div class="modal-content">
+        <span onclick="hide('budget')" style="float:right; cursor:pointer;">[X]</span>
+        <h2>Estimated Costs 2026</h2>
+        <table>
+            <tr><th>Item</th><th>USD</th><th>COP (Approx)</th></tr>
+            <tr><td>SAT Exam</td><td>$103</td><td>$420,000</td></tr>
+            <tr><td>Duolingo Test</td><td>$59</td><td>$240,000</td></tr>
+            <tr><td>MIT Application</td><td>$75</td><td>$300,000</td></tr>
+            <tr><td>CSS Profile</td><td>$25</td><td>$100,000</td></tr>
+        </table>
+    </div></div>
+
+    <img src="https://pngimg.com/d/snoopy_PNG21.png" class="floating-snoopy">
+
+    <audio id="sfx-level" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+    <audio id="sfx-up" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
+
+    <script>
+        function show(id) { document.getElementById(id).style.display = "block"; }
+        function hide(id) { document.getElementById(id).style.display = "none"; }
+        function playSfx() { document.getElementById('sfx-level').play(); }
+        
+        let xp = 0; let lvl = 1;
+        const ranks = ["E", "D", "C", "B", "A", "S"];
+
+        function addXP(val) {
+            xp += val;
+            if (xp >= 100) {
+                xp = 0; lvl++;
+                document.getElementById('lvl').innerText = lvl;
+                document.getElementById('rank').innerText = ranks[Math.min(Math.floor(lvl/2), 5)];
+                document.getElementById('sfx-up').play();
+                alert("SYSTEM AWAKENED! Level Up.");
+            }
+            document.getElementById('xp-bar').style.width = xp + '%';
+            document.getElementById('xp-num').innerText = Math.round(xp);
+        }
+
+        // --- COUNTDOWN ---
+        function updateCountdown() {
+            const now = new Date();
+            const deadline = new Date("November 1, 2026 00:00:00");
+            const diff = deadline - now;
+            document.getElementById('countdown').innerText = Math.floor(diff / (1000 * 60 * 60 * 24)) + " DAYS";
+        }
+        setInterval(updateCountdown, 1000);
+
+        // --- POMODORO ---
+        let timer; let timeLeft = 25 * 60;
+        function timerCtrl(action) {
+            playSfx();
+            if(action === 'start') {
+                timer = setInterval(() => {
+                    timeLeft--;
+                    let m = Math.floor(timeLeft / 60);
+                    let s = timeLeft % 60;
+                    document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+                    if(timeLeft <= 0) { clearInterval(timer); addXP(15); alert("Session Done! XP +15"); }
+                }, 1000);
+            } else if(action === 'pause') { clearInterval(timer); }
+            else { clearInterval(timer); timeLeft = 25*60; document.getElementById('timer').innerText = "25:00"; }
+        }
+
+        // --- QUIZ DIARIO ---
+        function startDailyQuiz() {
+            let correct = 0;
+            const q1 = prompt("1. What's the unit of Force? (Newton/Joule)");
+            if(q1?.toLowerCase() === 'newton') correct++;
+            const q2 = prompt("2. If f(x)=2x+3, what's f(5)?");
+            if(q2 === '13') correct++;
+            const q3 = prompt("3. Is MIT in Boston or Cambridge?");
+            if(q3?.toLowerCase() === 'cambridge') correct++;
+            const q4 = prompt("4. Derivative of x^2?");
+            if(q4?.toLowerCase() === '2x') correct++;
+            const q5 = prompt("5. Who said 'Cogito ergo sum'?");
+            if(q5?.toLowerCase().includes('descartes')) correct++;
+
+            alert(`You got ${correct}/5. XP Awarded!`);
+            addXP(correct * 10);
+        }
+    </script>
+</body>
+</html>
